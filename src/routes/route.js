@@ -9,10 +9,6 @@ const newpublisherController= require("../controllers/newPublisheercontroller")
 const batchController = require("../controllers/batchController")
 const devloperController = require("../controllers/devloperController")
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
-
 router.post("/createAuthor", authorController.createAuthor  )
 
 router.get("/getAuthorsData", authorController.getAuthorsData)
