@@ -16,13 +16,17 @@ const authorSchema = new mongoose.Schema({
     email : {
         type:String,
         required:true,
-        unique:true 
+        unique:true ,
+        lowercase: true,
+        trim: true
+        
     },
     password : {
         type:String,
-        required:true 
+        required:true,
+        
+      
     },
-
 },{timestamps:true})
 
 module.exports = mongoose.model("Author", authorSchema)

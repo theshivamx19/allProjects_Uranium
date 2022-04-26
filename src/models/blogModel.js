@@ -3,12 +3,12 @@ let ObjectId = mongoose.Schema.Types.ObjectId
 const blogSchema = new mongoose.Schema({
 
 title: {
-    type:string,
+    type:String,
     required:true
 },
  
 body: {
-     type:string,
+     type:String,
      required:true
     },
 
@@ -17,31 +17,31 @@ authorId:{
     ref:"Author"
 },
 
-tags: [string],
+tags: [{
+    type: String
+}],
 
 category: {
-    type: string,
+    type: String,
     required: true,
 },
-sDeleted: {
-    type:boolean, 
+subcategory: [{
+    type: String
+}],
+isDeleted: {
+    type:Boolean, 
     default: false
 },
      
-publishedAt: {
-         
-    type : Date.now()
-     
-}, 
-     
+ 
+publishedAt:{
+    type:Date,
+    default: Date.now
+},  
 isPublished: {
-
-    type: boolean,
+    type: Boolean,
     default: false
-},
-
-subcategory: ["technology", "entertainment", "life style", "food", "fashion"],
-
+}
 },{timestamps:true})
 
 module.exports = mongoose.model("Blog", blogSchema)
