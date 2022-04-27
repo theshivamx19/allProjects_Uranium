@@ -1,3 +1,4 @@
+const { is } = require('express/lib/request')
 const authorModel = require('../models/authorModel')
 const blogModel = require('../models/blogModel')
 const  createblog = async function(req,res){
@@ -26,9 +27,10 @@ const  createblog = async function(req,res){
 }
 const blogData = async function (req, res) {
     try {
+        
         let filters = req.query
         let filters1 = {}
-        let {authorid, category, tags, subCategory} = filters
+        let {authorid, category, tags, subCategory} = filters //Destructuring
         if(authorid){
             filters1.authorid= authorid 
         }
@@ -43,17 +45,13 @@ const blogData = async function (req, res) {
             filters1.subCategory= subCategory 
         }
         filters1.isDeleted = false 
+        
+        filters1.isPublished = false
+        
         console.log(filters1)
         let blogList = await blogModel.find(filters1)
         
-        // let byAuthorId = req.query.authorId
-        // let byCategory = req.query.category
-        // let bytag = req.query.tag
-        // let bySubCategory = req.query.subCategory
-
-        // let blogList = await blogModel.find({ $or : [{ authorId :byAuthorId}, {category: byCategory }, { tag: bytag }, { subCategory: bySubCategory }],  $and : [{isPublished : true}, {isDeleted : false}]})
-        // console.log(blogList)
-        
+               
         if (blogList) {
             res.status(200).send({ msg: blogList })
         }
