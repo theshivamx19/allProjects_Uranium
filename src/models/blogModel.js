@@ -32,7 +32,7 @@ isDeleted: {
 },
 publishedAt:{
     type:Date,
-    default: Date.now
+    default: Date.now()
 },  
 isPublished: {
     type: Boolean,
