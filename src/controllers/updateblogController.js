@@ -1,4 +1,5 @@
 const blogModel = require('../models/blogModel')
+//kjvkjhfhoiihgkjh
 
 
 
@@ -23,7 +24,7 @@ const putPublished = async function (req, res) {
         }
         let published = person.isPublished
         if (published == false) {
-            let result = await blogModel.findOneAndUpdate({ _id: person._id }, { $set: ({ isPublished: true }, { publishedAt: Date.now() }) }, { new: true })
+            let result = await blogModel.findOneAndUpdate({ _id: person._id }, { $set: ({ isPublished: true ,  publishedAt: Date.now() }) }, { new: true })
             res.send({ data: result })
         } else {
             res.send({ msg: "blog is already published" })

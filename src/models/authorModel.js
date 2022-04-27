@@ -27,7 +27,6 @@ const authorSchema = new mongoose.Schema({
         type:String,
         required:true,
         unique:true ,
-<<<<<<< HEAD
         lowercase: true,
         trim: true,
         validate: {
@@ -40,14 +39,6 @@ const authorSchema = new mongoose.Schema({
         },
 
     },
-=======
-        validate(value){
-            if(!validator.isEmail(value)){
-                throw new Error("Email is invalid");
-            }
-        }
-     },
->>>>>>> 473a7e145b4cefb76ef26e6cb5be8141e7c318dc
     password : {
         type:String,
         required:true,
