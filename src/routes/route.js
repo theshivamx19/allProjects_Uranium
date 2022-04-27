@@ -13,3 +13,6 @@ router.put("/blogs", deleteControllerParams.deleteBlogparams)
 
 
 module.exports =  router;
+
+
+//"email-validator": "^2.0.4", dependebc
