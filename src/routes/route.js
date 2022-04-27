@@ -10,6 +10,7 @@ router.post("/createauthor", autherController.createAuther)
 router.post("/createblogs", blogController.createblog)
 // router.put("/putupdateblog/:blogId", updatecontroller.putupdateblog)
 router.put("/putPublished/:blogId", updateController.putPublished)
+router.get('/blogData', blogController.blogData)
 
 
 module.exports =  router;
