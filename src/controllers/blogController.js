@@ -2,13 +2,21 @@ const blogModel = require('../models/authorModel')
 const authorModel = require('../models/blogModel')
 const  createblog = async function(req,res){
     try{
-        let author = req.body
-        if(Object.keys(author) !=0){
-            let createauther = await authorModel.create(author)
-            res.status(201).send({msg:createauther})
+        let blog = req.body
+        let autherId = blog.autherid
+        if (!authorId) {
+            return res.status(401).send({status : false, massage:"Author id not present in blog"})
+        }
+        let author = await authorModel.findById(autherId)
+        if(!author){
+            return res.status(401).send({massage: "Invalid author id"})
+        }
+        let createblog = await blogModel.create(blog)
+        if(createblog){
+            res.status(201).send({massage:"succesful blog creation",data:createblog})
         }
         else{
-            res.status(400).send({msg:"bad requuest"})
+            res.status(400).send({error:"invalid request"})
         }
     }
     catch(err){
