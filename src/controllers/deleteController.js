@@ -1,25 +1,22 @@
 
 const deleteModel = require('../models/blogModel')
 
-const  deleteBlogId = async function(req,res){
-    try{
-        let blogId = req.params.blogId
-        if(Object.keys(blogId) !=0){
-            let blog = await deleteModel.findById(blogId)
-            if(!blog) {
-                return res.send({status: false, message: "no such blogId  exists"})
-            }
-            let deleteBlog = await deleteModel.findOneAndUpdate({_id: blogId}, {isDeleted: true}, {new: true})
-            res.send({status: true, data: deleteBlog})
-        }
-        else{
-            res.status(400).send({msg:"bad requuest"})
-        }
-    }
-    catch(err){
-        console.log(err.massage)
-        res.status(500).send({msg:"error",error:err.massage})
-    }
-}
+const deleteBlogById = async (req, res)=> {
+  try {
+   let blogId = req.params.blogId;
+    if(!blogId) return res.status(400).send({status:false,msg:"BlogId is required"})
+  
+    let data = await deleteModel.findById(blogId);
+    if (!data)  return res.status(404).send({ status: false, msg: "No such blog found" });
 
-module.exports.deleteBlogId = deleteBlogId
+    if (data.isDeleted)  return res.status(404).send({ status: false, msg: " Already deleted blog Or Blog not exists" });
+
+    let timeStamps = new Date();
+    await deleteModel.findOneAndUpdate({_id:blogId},{$set: {isDeleted:true, deletedAt: timeStamps}},{new:true})
+    res.status(200).send({status:true,msg:"Blog is deleted successfully"})
+  } catch (err) {
+    res.status(500).send({ status: false, error: err.message });
+  }
+};
+
+module.exports.deleteBlogById = deleteBlogById

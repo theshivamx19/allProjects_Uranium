@@ -14,31 +14,17 @@ const authorSchema = new mongoose.Schema({
         required:true,
         enum:["Mr","Mrs","Miss"]
     },
-    // email: {
-    //     type:String,
-    //     required:true,
-    //     unique:true ,
-        
-        // validator: function (v) {
-        //     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
-        // }
 
     email : {
         type:String,
         required:true,
         unique:true ,
-        lowercase: true,
-        trim: true,
-        validate: {
-            validator: function (v) {
-                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
-            },
-
-            message: "Please enter a valid email"
-
-        },
-
-    },
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Email is invalid");
+            }
+        }
+     },
     password : {
         type:String,
         required:true,

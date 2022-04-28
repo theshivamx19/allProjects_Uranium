@@ -1,32 +1,25 @@
 
 const deleteModel = require('../models/blogModel')
 
-const  deleteBlogparams = async function(req,res){
+const deleteBlogsByParams = async (req, res) =>{
     try{
-        let category = req.query.category
-        let authorid = req.query.authorid
-        let tag = req.query.tag
-        let subcategory  = req.query.subcategory
-        let unpublished = req.query.unpublished
-
-        let paramBlogData = req.query;
-    
-        if(Object.keys(paramBlogData) !=0){
-            let blogParams = await deleteModel.find(paramBlogData)
-            if(!blogParams) {
-                return res.send({status: false, message: "no such blog exists"})
-            }
-            let deleteBlog = await deleteModel.findOneAndUpdate({paramBlogData: blogParams}, {isDeleted: true}, {new: true})
-            res.send({status: true, data: deleteBlog})
-        }
-        else{
-            res.status(400).send({msg:"bad requuest"})
-        }
+      let {...data} = req.query;
+      if(Object.keys(data).length == 0) return res.send({ status: false, msg: "Error!, Details are needed to delete a blog" });
+  
+      let timeStamps = new Date();
+  
+      let deletedBlog = await deleteModel.updateMany( 
+        {$and: [ {$and: [{isDeleted: false}, {isPublished: true}]}, {$or: [ {authorId: data.authorId}, {category: {$in: [data.category]}}, {tags: {$in: [data.tags]}}, {subcategory: {$in: [data.subcategory]}} ] } ]},
+        {$set: {isDeleted: true, deletedAt: timeStamps}},
+        {new: true}, 
+      )
+      
+      if(deletedBlog.modifiedCount == 0) return res.status(400).send({ status: false, msg: "No such blog exist or might have already been deleted" })
+  
+      res.status(200).send({ status: true, msg: "The blog has been deleted successfully" });
+    } catch (err) {
+      res.status(500).send({ status: false, error: err.message });
     }
-    catch(err){
-        console.log(err.massage)
-        res.status(500).send({msg:"error",error:err.massage})
-    }
-}
+  }
 
-module.exports.deleteBlogparams = deleteBlogparams
+module.exports.deleteBlogsByParams = deleteBlogsByParams
