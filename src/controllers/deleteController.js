@@ -1,6 +1,7 @@
 
 const deleteModel = require('../models/blogModel')
 
+
 const deleteBlogById = async (req, res)=> {
   try {
    let blogId = req.params.blogId;
@@ -12,8 +13,10 @@ const deleteBlogById = async (req, res)=> {
     if (data.isDeleted)  return res.status(404).send({ status: false, msg: " Already deleted blog Or Blog not exists" });
 
     let timeStamps = new Date();
+
     await deleteModel.findOneAndUpdate({_id:blogId},{$set: {isDeleted:true, deletedAt: timeStamps}},{new:true})
     res.status(200).send({status:true,msg:"Blog is deleted successfully"})
+
   } catch (err) {
     res.status(500).send({ status: false, error: err.message });
   }
