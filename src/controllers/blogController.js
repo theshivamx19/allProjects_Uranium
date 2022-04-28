@@ -1,4 +1,4 @@
-const { is } = require('express/lib/request')
+
 const authorModel = require('../models/authorModel')
 const blogModel = require('../models/blogModel')
 
@@ -8,7 +8,7 @@ const createBlog = async (req, res) => {
       let getData = req.body;
       if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required to create a Blog" });
   
-      let getAuthorData = await authorModel.findById(getData.authorId);
+      let getAuthorData = await authorModel.findById(getData.authorid);
       if(!getAuthorData) return res.status(404).send({ status: false, msg: "No such author exist" });
   
       let showBlogData = await blogModel.create(getData);
