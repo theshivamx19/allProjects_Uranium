@@ -135,8 +135,9 @@ const deleteBlogsByParams = async (req, res) => {
     res.status(500).send({ status: false, error: err.message });
   }
 }
+module.exports.createBlog = createBlog
 module.exports.getBlogs = getBlogs
+module.exports.putPublished = putPublished
 module.exports.deleteBlogsByParams = deleteBlogsByParams
 module.exports.deleteBlogById = deleteBlogById
-module.exports.putPublished = putPublished
-module.exports.createBlog = createBlog
+
