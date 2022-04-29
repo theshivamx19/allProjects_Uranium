@@ -1,21 +1,29 @@
+
+
+
+
+
+
+
+
+
+
+
+
 const express = require('express');
 const router = express.Router();
 
 const authorController = require("../controllers/authorController")
 const blogController = require("../controllers/blogController")
-const getBlogController = require("../controllers//getBlogController")
-const updateblogController = require("../controllers/updateblogController")
-const deleteController = require("../controllers/deleteController")
-const deleteBlogParamsController = require("../controllers/deleteBlogParamsController")
+const authController = require('../middleWare/auth')
 
-
-router.post('/CreateAuthors', authorController.addAuthor);
-router.post('/CreateBlog', blogController.createBlog);
-router.get('/getBlogs', getBlogController.getBlogs);
-router.put('/updateBlog/:blogId', updateblogController.putPublished);
-router.delete('/deleteBlog/:blogId', deleteController.deleteBlogById);
-router.delete('/deleteBlogsParams', deleteBlogParamsController.deleteBlogsByParams);
-
+router.post('/authors', authorController.addAuthor);
+router.post('/login', authorController.loginAuthor);
+router.post('/blogs',authController.authencation, blogController.createBlog);
+router.get('/blogs',authController.authencation, blogController.getBlogs);
+router.put('/blogs/:blogId',authController.authorise, blogController.putPublished);
+router.delete('/blogs/:blogId',authController.authorise, blogController.deleteBlogById);
+router.delete('/blogs',authController.authorise, blogController.deleteBlogsByParams);
 
 module.exports =  router;
 
