@@ -1,15 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
 const jwt = require('jsonwebtoken');
 const blogModel = require('../models/blogModel');
 

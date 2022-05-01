@@ -1,16 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
 const authorModel = require('../models/authorModel')
 const blogModel = require('../models/blogModel')
 //========================CREATE BLOGS===================================

@@ -1,20 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const Author = require('../models/authorModel');
 const jwt = require("jsonwebtoken");
 const validateEmail = require('email-validator');
