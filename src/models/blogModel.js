@@ -11,7 +11,7 @@ body: {
      type:String,
      required:true
     },
-authorid:String,
+//authorid:String,
 authorid:{
     type: ObjectId,
     ref:"Author"
