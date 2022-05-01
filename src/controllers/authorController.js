@@ -23,22 +23,42 @@ const addAuthor = async (req, res) => {
   try {
     let getData = req.body;
     if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required to add a Author" });
-req.body.email = req.body.email.toLowerCase() 
+    if((getData.fname) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your first Name" });
+    }
+    if((getData.lname) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your last Name" });
+    }
+    if((getData.title) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your title Name" });
+    }
+    if((getData.email) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your Email id" });
+    }
     if(!validateEmail.validate(req.body.email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
-
+    req.body.email = req.body.email.toLowerCase() 
+    if((getData.password) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your password" });
+    }
     let showAuthorData = await Author.create(getData);
     res.status(201).send({ status: true, data: showAuthorData });
   } catch(err) {
     res.status(500).send({ status: false, msg: err.message });
   }
-}
-
+};
+//=====================================login======================================
 const loginAuthor = async function (req, res) {
   try {
     let email = req.body.email;
     let password = req.body.password;
     let getData = req.body;
-    if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required to add a Author" });
+    if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required for Log In" });
+    if((getData.email) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your Email id" });
+    }
+    if((getData.password) == 0){
+      return res.status(400).send({ status: false, msg: "Enter your password" });
+    }
     let author = await Author.findOne({ email: email, password: password });
     if (!author)
       return res.status(400).send({
@@ -47,7 +67,7 @@ const loginAuthor = async function (req, res) {
       });
     let token = jwt.sign(
       {
-        userId: author._id.toString(),
+        authorid: author._id.toString(),
         organisation: "FunctionUp",
       },
       "functionup-uranium"

@@ -21,9 +21,9 @@ router.post('/authors', authorController.addAuthor);
 router.post('/login', authorController.loginAuthor);
 router.post('/blogs',authController.authencation, blogController.createBlog);
 router.get('/blogs',authController.authencation, blogController.getBlogs);
-router.put('/blogs/:blogId',authController.authorise, blogController.putPublished);
-router.delete('/blogs/:blogId',authController.authorise, blogController.deleteBlogById);
-router.delete('/blogs',authController.authorise, blogController.deleteBlogsByParams);
+router.put('/blogs/:blogId', authController.authorisation,blogController.putPublished);
+router.delete('/blogs/:blogId',authController.authorisation, blogController.deleteBlogById);
+router.delete('/blogs',authController.authorisation, blogController.deleteBlogsByParams);
 
 module.exports =  router;
 
