@@ -79,7 +79,7 @@ const putPublished = async function (req, res) {
       res.status(400).send({ msg: "already published" })
     } else if (published == false && Object.keys(body) == 0) {
       let result = await blogModel.findOneAndUpdate({ _id: blog._id }, { isPublished: true, publishedAt: Date.now() }, { new: true })
-      res.send({ data: result })
+      res.status(200).send({ data: result })
     } else {
       let result = await blogModel.findOneAndUpdate({ _id: blog._id }, body, { new: true })
       res.status(200).send({ data: result })
