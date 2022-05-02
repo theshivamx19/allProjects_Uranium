@@ -6,6 +6,9 @@ const validateEmail = require('email-validator');
 const creatAuthor = async (req, res) => {
   try {
     let getData = req.body;
+
+    if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required to add a Author" });
+    
     if((getData.fname) == 0){
       return res.status(400).send({ status: false, msg: "Enter your first Name" });
     }
@@ -23,10 +26,8 @@ const creatAuthor = async (req, res) => {
     if((getData.password) == 0){
       return res.status(400).send({ status: false, msg: "Enter your password" });
     }
-
-    if (Object.keys(getData).length == 0) return res.status(400).send({ status: false, msg: "Data is required to add a Author" });
-    req.body.email = req.body.email.toLowerCase()
-    if (!validateEmail.validate(req.body.email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
+    // req.body.email = req.body.email.toLowerCase()
+    // if (!validateEmail.validate(req.body.email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
 
     let showAuthorData = await Author.create(getData);
     res.status(201).send({ status: true, data: showAuthorData });
