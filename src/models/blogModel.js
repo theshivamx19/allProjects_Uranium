@@ -11,7 +11,7 @@ body: {
      type:String,
      required:true
     },
-//authorid:String,
+
 authorid:{
     type: ObjectId,
     ref:"Author"
@@ -29,7 +29,7 @@ subcategory: [{
 
 deletedAt :{
     type:Date,
-    default: Date.now
+    default: Date.now()
 },
 
 isDeleted: {
