@@ -30,4 +30,6 @@ const isValidEmail = function(email)
 {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
 };
+
+
 module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle};
