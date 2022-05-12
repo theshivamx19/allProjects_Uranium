@@ -14,9 +14,9 @@ const isValidRequestBody = function (requestBody)
    return Object.keys(requestBody).length > 0;
 };
 
-const isValidObjectId = function (userId)
+const isValidObjectId = function (objectId)
 {
-    if (!mongoose.Types.ObjectId.isValid(userId))return false
+    if (!mongoose.Types.ObjectId.isValid(objectId))return false
     
     return true;
 };
@@ -31,5 +31,22 @@ const isValidEmail = function(email)
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
 };
 
+const isValidReleaseDate = function(releasedAt){
+    return dateStringToDate(releasedAt) != null
+}
+
+function dateStringToDate(dateString) {
+    try {
+      var year = dateString.substring(0, 4);
+      var month = dateString.substring(4, 6);
+      var day = dateString.substring(6, 8);
+      var date = new Date(year, month - 1, day);
+      const offset = date.getTimezoneOffset()
+      date = new Date(date.getTime() - (offset * 60 * 1000));
+      return date;
+    } catch (error) {
+      return null;
+    }
+  }
 
 module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle};
