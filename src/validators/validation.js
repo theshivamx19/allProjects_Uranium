@@ -16,9 +16,7 @@ const isValidRequestBody = function (requestBody)
 
 const isValidObjectId = function (objectId)
 {
-    if (!mongoose.Types.ObjectId.isValid(objectId))return false
-    
-    return true;
+  return mongoose.Types.ObjectId.isValid(objectId);
 };
 
 const isValidTitle = function (title)
@@ -49,4 +47,4 @@ function dateStringToDate(dateString) {
     }
   }
 
-module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle};
+module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle,isValidReleaseDate};
