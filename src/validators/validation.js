@@ -23,28 +23,21 @@ const isValidTitle = function (title)
 {
     return ["Mr","Mrs","Miss"].indexOf(title)!=-1;
 };
-
+const isvalidNumber = function(phone){
+  return ( /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/).test(phone)
+}
 const isValidEmail = function(email)
 {
     return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
 };
 
 const isValidReleaseDate = function(releasedAt){
-    return dateStringToDate(releasedAt) != null
+    const dateExp = new RegExp(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/);
+    console.log(`dateExp.test(releasedAt) ${dateExp.test(releasedAt)}`)
+    return dateExp.test(releasedAt);
+    //return dateStringToDate(releasedAt)
 }
 
-function dateStringToDate(dateString) {
-    try {
-      var year = dateString.substring(0, 4);
-      var month = dateString.substring(4, 6);
-      var day = dateString.substring(6, 8);
-      var date = new Date(year, month - 1, day);
-      const offset = date.getTimezoneOffset()
-      date = new Date(date.getTime() - (offset * 60 * 1000));
-      return date;
-    } catch (error) {
-      return null;
-    }
-  }
 
-module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle,isValidReleaseDate};
+
+module.exports={isValidField,isValidRequestBody,isValidObjectId,isValidEmail,isValidTitle,isValidReleaseDate,isvalidNumber};

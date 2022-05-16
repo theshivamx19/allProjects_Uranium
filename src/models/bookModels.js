@@ -60,13 +60,13 @@ const bookSchema = new mongoose.Schema(
             default: false
         },
         releasedAt: {
-         date: {
+           type: Date,
              reqiured: true,
-             type: Date
+            
             } 
         },
 
-    }, { timestamps: true }
+     { timestamps: true }
 );
 
 module.exports = mongoose.model("Book", bookSchema);

@@ -1,47 +1,79 @@
 const Usermodel = require("../models/userModels");
 const Validation = require("../validators/validation");
+const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
+
+  
+  const isValidRequestBody = function (requestbody) {
+    return Object.keys(requestbody).length > 0;
+  };
 
 const UserCreate = async function (req, res) {
     try {
+
         const requestBody = req.body;
-        if (!Validation.isValidRequestBody(requestBody)) {
-            res.status(400).send({ status: false, msg: "user is required, invaild request in body" })
+        if (!isValidRequestBody(requestBody)) {
+            res
+                .status(400)
+                .send({
+                    status: false,
+                    msg: "Invalid request parameters. Please provide user Details",
+                });
             return
         }
-        if (!Validation.isValidField(requestBody.name))
-            return res.status(400).send({ status: false, message: 'name is required!' });
+
+        if (!Validation.isValidTitle(requestBody.title)) {
+            return res.status(400).send({ status: false, message: 'title is required!' })
+        };
+
+        if (!Validation.isValidField(requestBody.name)) {
+            return res.status(400).send({ status: false, message: 'name is required!' })
+        };
 
 
-        if (!Validation.isValidTitle(requestBody.title))
-            return res.status(400).send({ status: false, message: 'title is required!' });
 
-        if (!Validation.isValidField(requestBody.phone))
-            return res.status(400).send({ status: false, message: 'Phone no. is required!' });
+        if (!Validation.isValidField(requestBody.phone)) {
+            return res.status(400).send({ status: false, message: 'Phone no. is required!' })
+        };
+
+        if (!/^[0-9]\d{9}$/gi.test(requestBody.phone)) {
+            res
+                .status(400)
+                .send({
+                    status: false,
+                    message: `provide 10 digits Mobile Number`,
+                });
+            return;
+        }
+
 
         let existphoneNo = await Usermodel.findOne({ phone: requestBody.phone })
         if (existphoneNo)
             return res.status(400).send({ status: false, message: 'Phone no. is already exist!' })
 
-        if (!Validation.is(requestBody.password))
-            return res.status(400).send({ status: false, message: 'password is required!' });
-        const isValidPassword = !/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password) 
-        if(!isValidPassword) {
-            return res.status(400).send({status: false , msg:" password minumum lenght sholud be 8 charcters and max"})
+
+        if (!Validation.isValidField(requestBody.email)) {
+            return res.status(400).send({ status: false, message: 'email is required!' })
+        };
+
+
+        if (!Validation.isValidEmail(requestBody.email)) {
+            return res.status(400).send({ status: false, message: 'enter a valid email id' })
+
         }
 
-        
+        if (!Validation.isValidField(requestBody.password))
 
+            return res.status(400).send({ status: false, message: 'password is required!' });
+        if (!/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(requestBody.password)) {
+            return res.status(400).send({ status: false, message: 'password shouldbe minimum 8 chartacters' })
+        }
 
-        if (!Validation.isValidEmail(requestBody.email))
-            return res.status(400).send({ status: false, message: 'email is required!' });
-
-            
 
         let existemail = await Usermodel.findOne({ email: requestBody.email });
         if (existemail)
             return res.status(400).send({ status: false, message: 'email is already exist!' });
-          
+
 
 
         let Userdata = await Usermodel.create(requestBody)
@@ -88,11 +120,10 @@ const LoginCreate = async function (req, res) {
                 userId: user._id.toString(),
                 batch: "Uranium",
                 organisation: "FUnctionUp",
-                iat: (new Date().getTime())
             },
             "group-17",
             {
-                expiresIn: '10m'
+                expiresIn: '24h'
             }
         );
         // res.header('x-api-key', token);
