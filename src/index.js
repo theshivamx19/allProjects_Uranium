@@ -15,16 +15,6 @@ mongoose.connect("mongodb+srv://Project_3:Project_3@cluster0.erch6.mongodb.net/P
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) );
 
-// app.use(
-//     function (req,res,next)
-//     {
-//         const date = new Date();
-//         let currDateAndTime = date.toString();
-//         console.log(currDateAndTime,',',req.ip,',',req.method,',',req.path);
-//         next();
-//     }
-// );
-
 app.use('/',route);
 
 app.use((req, res, next) => {

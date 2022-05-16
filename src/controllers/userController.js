@@ -13,7 +13,7 @@ const UserCreate = async function (req, res) {
 
         const requestBody = req.body;
         if (!isValidRequestBody(requestBody)) {
-            res
+           res
                 .status(400)
                 .send({
                     status: false,
@@ -77,12 +77,12 @@ const UserCreate = async function (req, res) {
 
 
         let Userdata = await Usermodel.create(requestBody)
-        res.status(201).send({ status: true, message: 'New details created successfully.', data: Userdata });
-        console.log({ status: true, data: Userdata });
+       return res.status(201).send({ status: true, message: 'New details created successfully.', data: Userdata });
+        // console.log({ status: true, data: Userdata });
 
     } catch (error) {
 
-        res.status(500).send({ status: false, msg: error.message });
+       return res.status(500).send({ status: false, msg: error.message });
 
     }
 

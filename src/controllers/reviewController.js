@@ -60,7 +60,7 @@ const creatReview = async function (req, res) {
         const noOfReviews = await reviewModel.find({ bookId: bookId });
         await bookModel.findOneAndUpdate({ _id: bookId }, { reviews: noOfReviews.length })
 
-        res.status(201).send({ status: true, msg: "review created sucessfully", data: reviewCreated })
+      return  res.status(201).send({ status: true, msg: "review created sucessfully", data: reviewCreated })
 
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
@@ -127,7 +127,7 @@ const deletereviewbyId = async function(req, res){
 
         let bookExists = await bookModel.findOne({ _id: bookId, isDeleted: false })
         if (!bookExists)
-            return res, satus(404).send({ status: false, message: "book not found" })
+            return res.satus(404).send({ status: false, message: "book not found" })
 
 
         // //// check the review id /////
