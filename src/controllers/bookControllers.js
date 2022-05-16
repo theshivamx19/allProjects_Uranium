@@ -36,6 +36,7 @@ const bookcreate = async function (req, res) {
 
         if (!Validation.isValidField(requestBody.ISBN))
             return res.status(400).send({ status: false, message: 'ISBN No. is required!' });
+            
         let ISBNexist = await bookModel.findOne({ ISBN: requestBody.ISBN })
         if (ISBNexist)
             return res.status(400).send({ status: false, message: 'ISBN no. is already exist!' })
@@ -50,13 +51,19 @@ const bookcreate = async function (req, res) {
         if (!Validation.isValidField(requestBody.releasedAt))
             return res.status(400).send({ status: false, message: 'releasedAt is required!' });
 
-            
-        console.log(`requestBody.releasedAt is ${requestBody.releasedAt}`);
-         if(!Validation.isValidReleaseDate(requestBody.releasedAt)) {
-            return res.status(400).send({ status: false, message: 'Invalid format releasedAt' });
-         }  
+        if (requestBody.isDeleted == true) {
+            return res
+                .status(400)
+                .send({ status: false, message: "Cannot input isDeleted as true while creating a book" });
+        }
 
-         
+
+        //console.log(`requestBody.releasedAt is ${requestBody.releasedAt}`);
+        if (!Validation.isValidReleaseDate(requestBody.releasedAt)) {
+            return res.status(400).send({ status: false, message: 'Invalid format releasedAt' });
+        }
+
+
 
         if (requestBody.isPublished)
 
@@ -155,7 +162,7 @@ const bookupdate = async function (req, res) {
 
         let existISBN = await bookModel.findOne({ ISBN: update.ISBN })
         if (existISBN) return res.status(400).send({ status: false, msg: "this ISBN no. is already exist" })
-        
+
         if (update.title || update.excerpt || update.ISBN || update.releasedAt) {
             let uptitle = await bookModel.findByIdAndUpdate(
                 { _id: bookId },
