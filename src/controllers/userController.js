@@ -127,7 +127,7 @@ const LoginCreate = async function (req, res) {
             }
         );
         // res.header('x-api-key', token);
-        res.status(201).send({ status: true, msg: " New Login Successfull !", token: token });
+        return res.status(201).send({ status: true, msg: " New Login Successfull !", token: token });
     }
     catch (error) {
         res.status(500).send({ status: false, error: error.message });

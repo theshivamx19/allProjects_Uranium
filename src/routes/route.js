@@ -9,7 +9,7 @@ const auth = require("../middleware/auth")
 
 router.post("/register", userController.UserCreate);
 router.post("/login", userController.LoginCreate);
-router.post("/bookCreate", auth.validateToken,auth.authorisation, bookController.bookcreate);
+router.post("/books", auth.validateToken,auth.authorisation, bookController.bookcreate);
 router.get("/books", bookController.getBooks)
 router.get("/books/:bookId",bookController.getBook)
 router.delete('/books/:bookId',auth.validateToken, auth.authorisation,bookController.deleteBookById)

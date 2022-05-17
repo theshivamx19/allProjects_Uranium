@@ -7,7 +7,7 @@ const validateToken = function (req, res, next) {
         if (!token)
             token = req.headers['x-Api-Key']
         //checking token is present or not
-        if (!token) return res.send({ status: false, msg: 'Token must be present' })
+        if (!token) return res.status(400).send({ status: false, msg: 'Token must be present' })
         //decoding token
         let decodedToken = jwt.verify(token, 'group-17', { ignoreExpiration: true})
         //console.log(decodedToken)

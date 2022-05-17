@@ -108,7 +108,7 @@ const reviewupdate = async function (req, res) {
                 { $set: { rating: requestBody.rating, review: requestBody.review, reviewedBy: requestBody.reviewedBy } },
                 { new: true }
             )
-            return res.status(201).send({ status: true, msg: "Updated data", data: updatedreview })
+            return res.status(200).send({ status: true, msg: "Updated data", data: updatedreview })
         }
 
     } catch (err) {
