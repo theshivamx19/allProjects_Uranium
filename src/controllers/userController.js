@@ -196,7 +196,7 @@ const login = async (req, res) => {
             email
         })
 
-        if (!user) return res.status(400).send({
+        if (!user) return res.status(404).send({
             status: !true,
             message: `☹️ ${email} - related user does't exist!`,
         })
@@ -207,7 +207,7 @@ const login = async (req, res) => {
             return !true
         })
 
-        if (!verify) return res.status(400).send({
+        if (!verify) return res.status(401).send({
             status: !true,
             message: `❌ Wrong Email address or Password!`,
         })
