@@ -12,12 +12,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(multer().any())
 
-mongoose
-  .connect(
-    "mongodb+srv://firstDB:zwPu7dwJG0RCXU9f@cluster0.kgij2.mongodb.net/group54Database", {
-      useNewUrlParser: true,
-    }
-  )
+mongoose.connect("mongodb+srv://firstDB:zwPu7dwJG0RCXU9f@cluster0.kgij2.mongodb.net/group39Database", { useNewUrlParser: true, })
+
   .then((result) => console.log("MongoDb is connected"))
   .catch((err) => console.log(err));
 
