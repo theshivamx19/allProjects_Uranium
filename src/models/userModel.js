@@ -11,9 +11,9 @@ const userSchema = new mongoose.Schema({
 
     phone: { type: String, required: true, unique: true, trim: true },
 
-    password: { type: String, required: true, min: 8, max: 15 },
+    password: { type: String, required: true },
 
-    adress: {
+    address: {
         shipping: {
             street: { type: String, required: true },
             city: { type: String, required: true },
