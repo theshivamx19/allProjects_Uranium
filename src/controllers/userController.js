@@ -18,7 +18,14 @@ const createUser = async function (req, res) {
             })
         }
 
-        let { fname,lname,email,phone,password,address } = requestBody
+        let {
+            fname,
+            lname,
+            email,
+            phone,
+            password,
+            address
+        } = requestBody
 
         const files = req.files
         if (vfy.isEmptyFile(files)) {
@@ -153,73 +160,81 @@ const createUser = async function (req, res) {
 
 
 const login = async (req, res) => {
-    // 💁‍♂️ get data from body
-    const data = req.body
-    if (vfy.isEmptyObject(data)) return res.status(400).send({
-        status: !true,
-        message: "☹️ Login BODY must be required!",
-    })
+    try {
+        // 💁‍♂️ get data from body
+        const data = req.body
+        if (vfy.isEmptyObject(data)) return res.status(400).send({
+            status: !true,
+            message: "☹️ Login BODY must be required!",
+        })
 
-    // 👉 de-structure data
-    let {
-        email,
-        password
-    } = data;
+        // 👉 de-structure data
+        let {
+            email,
+            password
+        } = data;
 
 
-    // 👉 Basic validations
-    if (vfy.isEmptyVar(email)) return res.status(400).send({
-        status: !true,
-        message: "☹️ Email address must be required!",
-    })
+        // 👉 Basic validations
+        if (vfy.isEmptyVar(email)) return res.status(400).send({
+            status: !true,
+            message: "☹️ Email address must be required!",
+        })
 
-    if (!vfyvfy.isEmptyVarEmail(email)) return res.status(400).send({
-        status: !true,
-        message: "☹️ Invalid Email address!",
-    })
+        if (!vfy.isValidEmail(email)) return res.status(400).send({
+            status: !true,
+            message: "☹️ Invalid Email address!",
+        })
 
-    if (vfy.isEmptyVar(password)) return res.status(400).send({
-        status: !true,
-        message: "☹️ Password must be required!",
-    })
+        if (vfy.isEmptyVar(password)) return res.status(400).send({
+            status: !true,
+            message: "☹️ Password must be required!",
+        })
 
-    // 👉 db call for login and validation
-    const user = await userModel.findOne({
-        email
-    })
+        // 👉 db call for login and validation
+        const user = await userModel.findOne({
+            email
+        })
 
-    if (!user) return res.status(400).send({
-        status: !true,
-        message: `☹️ ${email} - related user does't exist!`,
-    })
+        if (!user) return res.status(400).send({
+            status: !true,
+            message: `☹️ ${email} - related user does't exist!`,
+        })
 
-    // 🔐 vfy the password
-    const verify = await bcrypt.compare(password, user.password).catch(_ => {
-        console.log(_.message)
-        return false
-    })
+        // 🔐 vfy the password
+        const verify = await bcrypt.compare(password, user.password).catch(_ => {
+            console.log(_.message)
+            return !true
+        })
 
-    if (!verify) return res.status(400).send({
-        status: !true,
-        message: `❌ Wrong Email address or Password!`,
-    })
+        if (!verify) return res.status(400).send({
+            status: !true,
+            message: `❌ Wrong Email address or Password!`,
+        })
 
-    // 🔐 generate Token one hr
-    const Token = jwt.sign({
-        userId: user._id
-    }, 'secret', {
-        expiresIn: '1h'
-    });
+        // 🔐 generate Token one hr
+        const Token = jwt.sign({
+            userId: user._id
+        }, 'secret', {
+            expiresIn: '1h'
+        });
 
-    // ✅ all good
-    res.status(200).send({
-        status: true,
-        message: `😄User Logged-in Successfully!`,
-        data: {
-            userId: user._id,
-            token: Token
-        }
-    })
+        // ✅ all good
+        res.status(200).send({
+            status: true,
+            message: `😄User Logged-in Successfully!`,
+            data: {
+                userId: user._id,
+                token: Token
+            }
+        })
+    } catch (error) {
+        // console.log(error)
+        res.status(500).send({
+            status: !true,
+            Message: error.message
+        })
+    }
 }
 
 
