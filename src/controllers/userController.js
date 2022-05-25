@@ -7,10 +7,12 @@ const {
 const jwt = require('jsonwebtoken');
 const saltRounds = 10;
 
+//======================== #Post Api {Creat User}👦👦 ==============😍============================>>
+
 const createUser = async function (req, res) {
     try {
         const requestBody = req.body
-        console.log(vfy.isEmptyObject(requestBody))
+        //console.log(vfy.isEmptyObject(requestBody))
         if (vfy.isEmptyObject(requestBody)) {
             return res.status(400).send({
                 status: false,
@@ -42,27 +44,16 @@ const createUser = async function (req, res) {
             })
         }
 
-        if (vfy.isEmptyVar(lname)) {
-            return res.status(400).send({
-                status: false,
-                Message: "Please provide user's last name"
-            })
-        }
+        if (vfy.isEmptyVar(lname)) { return res.status(400).send({status: false,Message: "Please provide user's last name"})}
 
-        if (vfy.isEmptyVar(email)) {
-            return res.status(400).send({
-                status: false,
-                Message: "Please provide user's email"
-            })
-        }
+        if (vfy.isEmptyVar(email)) { return res.status(400).send({ status: false, Message: "Please provide user's email" }) }
 
-        if (vfy.isEmptyVar(phone)) {
-            return res.status(400).send({
-                status: false,
-                Message: "Please provide a vaild phone number"
-            })
-        }
+        if (!vfy.isValidEmail(email)) return res.status(400).send({ status: false, Message: "please enter valid email" });
+        
+        if (vfy.isEmptyVar(phone)) { return res.status(400).send({ status: false, Message: "Please provide a vaild phone number" }) }
 
+        if (!vfy.isValidPhone(phone)) return res.status(400).send({ status: false, Message: "please enter valid phone number" });
+        
         if (vfy.isEmptyVar(password)) {
             return res.status(400).send({
                 status: false,
@@ -75,6 +66,12 @@ const createUser = async function (req, res) {
                 status: false,
                 Message: "Please provide address"
             })
+        }
+
+        const addressObject = vfy.isValidJSONstr(address)
+
+        if (!addressObject) {
+            return res.status(400).send({ status: false, Message: "Address json you are providing is not in a valid format 🤦‍♂️😂🤣" })
         }
 
         address = JSON.parse(address)
@@ -99,39 +96,32 @@ const createUser = async function (req, res) {
             Message: "Please provide city name in shipping address"
         })
 
-        if (vfy.isEmptyVar(shipping.pincode)) return res.status(400).send({
-            status: false,
-            Message: "Please provide pincode name in shipping address"
-        })
+        if (vfy.isEmptyVar(address)) return res.status(400).send({ status: false, Message: "Plz enter address..!!" });
+        if (vfy.isEmptyVar(shipping)) return res.status(400).send({ status: false, Message: "Plz enter shipping address.!!" });
+        if (vfy.isEmptyVar(billing)) return res.status(400).send({ status: false, Message: "Plz enter billing address.!!" });
+        if (vfy.isEmptyVar(shipping.street)) return res.status(400).send({ status: false, Message: "Plz enter shipping street..!!" });
+        if (vfy.isEmptyVar(shipping.city)) return res.status(400).send({ status: false, Message: "Plz enter shipping city..!!" });
+        if (vfy.isEmptyVar(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz enter shopping pincode" });
+        if (!vfy.isPincodeValid(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz enter a valid pincode" });
+        if (vfy.isEmptyVar(billing.street)) return res.status(400).send({ status: false, Message: "Plz enter billing street..!!" });
+        if (vfy.isEmptyVar(billing.city)) return res.status(400).send({ status: false, Message: "Plz enter billing city..!!" });
+        if (vfy.isEmptyVar(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz enter billing pincode" });
+        if (!vfy.isPincodeValid(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz enter a valid pincode" });
 
-        if (vfy.isEmptyObject(billing)) return res.status(400).send({
-            status: false,
-            Message: "Please provide billing address"
-        })
+        //=================================Unique Db calls (Time saving)======================>>
 
+        let usedEmail = await userModel.findOne({ email: email });
+        if (usedEmail) return res.status(400).send({ status: false, msg: "This email is already registerd" });
 
-        // shipping address validation
-        if (vfy.isEmptyVar(billing.street)) return res.status(400).send({
-            status: false,
-            Message: "Please provide street name in billing address"
-        })
-
-        if (vfy.isEmptyVar(billing.city)) return res.status(400).send({
-            status: false,
-            Message: "Please provide city name in billing address"
-        })
-
-        if (vfy.isEmptyVar(billing.pincode)) return res.status(400).send({
-            status: false,
-            Message: "Please provide pincode name in billing address"
-        })
+        let usedMobileNumber = await userModel.findOne({ phone: phone });
+        if (usedMobileNumber) return res.status(400).send({ status: false, msg: "This Mobile no. is already registerd" });
 
 
         const profilePicture = await uploadFile(files[0])
         const encryptedPassword = await bcrypt.hash(password, saltRounds)
 
 
-        const userData = {
+        const userrequestBody = {
             fname,
             lname,
             email,
@@ -141,7 +131,7 @@ const createUser = async function (req, res) {
             address
         }
 
-        const newUser = await userModel.create(userData);
+        const newUser = await userModel.create(userrequestBody);
 
         res.status(201).send({
             status: true,
@@ -150,7 +140,6 @@ const createUser = async function (req, res) {
         });
 
     } catch (error) {
-        // console.log(error)
         res.status(500).send({
             status: false,
             Message: error.message
@@ -158,6 +147,7 @@ const createUser = async function (req, res) {
     }
 }
 
+//======================== #login Api 🔐🔑🗝️ ======================🙂=========>>
 
 const login = async (req, res) => {
     try {
@@ -168,7 +158,7 @@ const login = async (req, res) => {
             message: "☹️ Login BODY must be required!",
         })
 
-        // 👉 de-structure data
+        // 👉 de-structure data ❤️
         let {
             email,
             password
@@ -181,7 +171,7 @@ const login = async (req, res) => {
             message: "☹️ Email address must be required!",
         })
 
-        if (!vfy.isValidEmail(email)) return res.status(400).send({
+        if (!vfy.isEmptyVarEmail(email)) return res.status(400).send({
             status: !true,
             message: "☹️ Invalid Email address!",
         })
@@ -237,9 +227,20 @@ const login = async (req, res) => {
     }
 }
 
+//==========================================#Get Api (Get User) ============================================>>
 
-
-module.exports = {
-    createUser,
-    login
+const getUser = async function (req, res) {
+    try {
+        let userId = req.params.userId 
+        let user = await userModel.findById(userId)
+        if (!user) {
+            return res.status(404).send({ status: false, Message: "No such user found" })
+        }
+        return res.status(200).send({ status: true, data: user })
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, Message: err.message })
+    }   
 }
+
+module.exports = {createUser,login, getUser}

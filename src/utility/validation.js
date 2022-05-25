@@ -47,6 +47,17 @@ let isEmptyFile = (file) => {
     return false
 }
 
+const isPincodeValid= function(value){
+    return /^[1-9]{1}[0-9]{5}$/.test(value);}
+
+
+let isValidJSONstr = (json) => {
+    try {
+        return JSON.parse(json)
+    } catch (_) {
+        return false
+    }
+}
 
 module.exports = {
     isEmptyObject,
@@ -57,5 +68,7 @@ module.exports = {
     isValidObjectId,
     isValidDateFormat,
     isValidDate,
-    isEmptyFile
+    isEmptyFile,
+    isValidJSONstr,
+    isPincodeValid
 }
