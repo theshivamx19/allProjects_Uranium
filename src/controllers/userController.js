@@ -159,6 +159,7 @@ const createUser = async function (req, res) {
 }
 
 
+/*--------------------------- LOGIN ---------------------------*/
 const login = async (req, res) => {
     try {
         // 💁‍♂️ get data from body
@@ -238,8 +239,136 @@ const login = async (req, res) => {
 }
 
 
+/*--------------------------- UPDATE ---------------------------*/
+
+const update = async (req, res) => {
+    try {
+        // 💁‍♂️ get data from body
+        const data = req.body
+        const userId = req.params.userId
+        if (vfy.isEmptyObject(data)) return res.status(400).send({
+            status: !true,
+            message: "☹️ BODY must be required!",
+        })
+
+        // 👉 get User by userID
+        const user = await userModel.findById(userId).catch(_ => null)
+        if (!user) return res.status(404).send({
+            status: !true,
+            message: "☹️ User data not found!",
+        })
+
+        // 👉 de-structure data
+        let {
+            fname,
+            lname,
+            email,
+            phone,
+            password,
+            address
+        } = data
+
+
+        if (!vfy.isEmptyVar(fname)) {
+            user.fname = fname
+        }
+
+        if (!vfy.isEmptyVar(lname)) {
+            user.lname = lname
+        }
+
+        if (!vfy.isEmptyVar(email)) {
+            if (!vfy.isValidEmail(email)) return res.status(400).send({
+                status: !true,
+                message: "☹️ Invalid email address!",
+            })
+            user.email = email
+        }
+
+        if (!vfy.isEmptyVar(phone)) {
+            if (!vfy.isValidPhone(phone)) return res.status(400).send({
+                status: !true,
+                message: "☹️ Invalid phone number!",
+            })
+            user.phone = phone
+        }
+
+        if (!vfy.isEmptyVar(password)) {
+            if (!vfy.isValidPassword(password)) return res.status(400).send({
+                status: !true,
+                message: "☹️ Please enter a valid password [A-Z] [a-z] [0-9] !@#$%^& and length with in 8-15",
+            })
+            const encryptedPassword = await bcrypt.hash(password, saltRounds)
+            user.password = encryptedPassword
+        }
+
+        if (!vfy.isEmptyVar(address)) {
+            let addressObj = vfy.isValidJSONstr(address)
+            if (!addressObj) return res.status(400).send({
+                status: !true,
+                message: "☹️ JSON address NOT in a valid structure, make it in a format!",
+            })
+            address = addressObj
+
+            let {
+                shipping,
+                billing
+            } = address
+
+            // shipping address validation
+            if (!vfy.isEmptyObject(shipping)) {
+                if (!vfy.isEmptyVar(shipping.street)) {
+                    user.address.shipping.street = shipping.street
+                }
+
+                if (!vfy.isEmptyVar(shipping.city)) {
+                    user.address.shipping.city = shipping.city
+                }
+
+                if (!vfy.isEmptyVar(shipping.pincode)) {
+                    user.address.shipping.pincode = shipping.pincode
+                }
+            }
+
+            // shipping address validation
+            if (!vfy.isEmptyObject(billing)) {
+                if (!vfy.isEmptyVar(billing.street)) {
+                    user.address.billing.street = billing.street
+                }
+
+                if (!vfy.isEmptyVar(billing.city)) {
+                    user.address.billing.city = billing.city
+                }
+
+                if (!vfy.isEmptyVar(billing.pincode)) {
+                    user.address.billing.pincode = billing.pincode
+                }
+            }
+
+        }
+
+        await user.save()
+
+        res.status(200).send({
+            status: true,
+            Message: "User Updated successfully!",
+            data: user
+        })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            status: !true,
+            Message: error.message
+        })
+    }
+}
+
+
+
 
 module.exports = {
     createUser,
-    login
+    login,
+    update
 }

@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const moment = require("moment")
 
 let isEmptyObject = function (body) {
-    if(!body) return true
+    if (!body) return true
     if (Object.keys(body).length == 0) return true;
     return false;
 }
@@ -47,6 +47,14 @@ let isEmptyFile = (file) => {
     return false
 }
 
+let isValidJSONstr = (json) => {
+    try {
+        return JSON.parse(json)
+    } catch (_) {
+        return false
+    }
+}
+
 
 module.exports = {
     isEmptyObject,
@@ -57,5 +65,6 @@ module.exports = {
     isValidObjectId,
     isValidDateFormat,
     isValidDate,
-    isEmptyFile
+    isEmptyFile,
+    isValidJSONstr
 }

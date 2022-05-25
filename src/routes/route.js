@@ -8,5 +8,6 @@ router.post("/", (req, res) => {
 
 router.post('/register',controller.createUser)
 router.post('/login',controller.login)
+router.put('/user/:userId/profile',controller.update)
 
 module.exports = router;
