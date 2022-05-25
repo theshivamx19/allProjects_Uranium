@@ -47,6 +47,15 @@ let isEmptyFile = (file) => {
     return false
 }
 
+const acceptFileType = (file, ...types) => {
+    return types.indexOf(file.mimetype) !== -1 ? true : false
+}
+
+const isPincodeValid = function (value) {
+    return /^[1-9]{1}[0-9]{5}$/.test(value);
+}
+
+
 let isValidJSONstr = (json) => {
     try {
         return JSON.parse(json)
@@ -54,7 +63,6 @@ let isValidJSONstr = (json) => {
         return false
     }
 }
-
 
 module.exports = {
     isEmptyObject,
@@ -66,5 +74,7 @@ module.exports = {
     isValidDateFormat,
     isValidDate,
     isEmptyFile,
-    isValidJSONstr
+    acceptFileType,
+    isValidJSONstr,
+    isPincodeValid
 }
