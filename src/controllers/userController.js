@@ -43,7 +43,7 @@ const createUser = async function (req, res) {
         if (vfy.isEmptyVar(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide shopping pincode"});
         if (!vfy.isPincodeValid(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide a valid pincode"});
 
-        // billinf address validation
+        // billing address validation
         if (vfy.isEmptyObject(billing)) return res.status(400).send({ status: false, Message: "Plz provide billing address.!!"});
         if (vfy.isEmptyVar(billing.street)) return res.status(400).send({ status: false, Message: "Plz provide billing street..!!"});
         if (vfy.isEmptyVar(billing.city)) return res.status(400).send({ status: false, Message: "Plz provide billing city..!!"});
