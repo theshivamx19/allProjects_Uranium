@@ -64,6 +64,15 @@ let isValidJSONstr = (json) => {
     }
 }
 
+let checkArrContent = (array, ...isContentArray) => {
+    let count = 0
+    array.forEach(e => {
+        if (!isContentArray.includes(e)) count++
+    });
+    return count == 0 ? true : false
+}
+
+
 module.exports = {
     isEmptyObject,
     isEmptyVar,
@@ -76,5 +85,6 @@ module.exports = {
     isEmptyFile,
     acceptFileType,
     isValidJSONstr,
-    isPincodeValid
+    isPincodeValid,
+    checkArrContent
 }
