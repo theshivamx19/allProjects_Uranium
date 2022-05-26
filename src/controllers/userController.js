@@ -53,13 +53,13 @@ const createUser = async function (req, res) {
         //=================================Unique Db calls (Time saving)======================>>
 
         let usedEmail = await userModel.findOne({ email });
-        if (usedEmail) return res.status(400).send({ status: false, msg: "This email is already registerd" });
+        if (usedEmail) return res.status(400).send({ status: false, Message: "This email is already registerd" });
 
         let usedMobileNumber = await userModel.findOne({ phone });
-        if (usedMobileNumber) return res.status(400).send({ status: false, msg: "This Mobile no. is already registerd" });
+        if (usedMobileNumber) return res.status(400).send({ status: false, Message: "This Mobile no. is already registerd" });
 
         // ================================= qws file upload here 📷📷🖼️ ==========================>>
-        if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: false, msg: "we accept jpg, jpeg or png as profile picture only" });
+        if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: false, Message: "we accept jpg, jpeg or png as profile picture only" });
 
         const profilePicture = await uploadFile(files[0])
 
@@ -168,7 +168,7 @@ const update = async (req, res) => {
 
         if (!vfy.isEmptyVar(email)) {
             let usedEmail = await userModel.findOne({ _id: { $ne: userId }, email });
-            if (usedEmail) return res.status(400).send({ status: false, msg: "This email is already registerd" });
+            if (usedEmail) return res.status(400).send({ status: false, Message: "This email is already registerd" });
 
             if (!vfy.isValidEmail(email)) return res.status(400).send({ status: !true, message: "☹️ Invalid email address!" })
             user.email = email
@@ -176,7 +176,7 @@ const update = async (req, res) => {
 
         if (!vfy.isEmptyVar(phone)) {
             let usedMobileNumber = await userModel.findOne({ _id: { $ne: userId }, phone });
-            if (usedMobileNumber) return res.status(400).send({ status: false, msg: "This Mobile no. is already registerd" });
+            if (usedMobileNumber) return res.status(400).send({ status: false, Message: "This Mobile no. is already registerd" });
 
             if (!vfy.isValidPhone(phone)) return res.status(400).send({ status: !true, message: "☹️ Invalid phone number!" })
             user.phone = phone
@@ -233,7 +233,7 @@ const update = async (req, res) => {
         }
 
         if (!vfy.isEmptyFile(files)) {
-            if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: false, msg: "we accept jpg, jpeg or png as profile picture only" });
+            if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: false, Message: "we accept jpg, jpeg or png as profile picture only" });
 
             const profilePicture = await uploadFile(files[0])
             user.profileImage = profilePicture

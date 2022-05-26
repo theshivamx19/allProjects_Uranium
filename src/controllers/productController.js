@@ -63,48 +63,96 @@ const create = async (req, res) => {
 }
 
 
-//----------------------------------------------------------------------------------->>
-const getProduct = async function (req, res){
+// get product list ----------------------------------------------------------------------------------->>
+const getProduct = async function (req, res) {
 
-    try {if (req.query.size || req.query.name || req.query.priceGreaterThan || req.query.priceLessThan) {
-    let availableSizes = req.query.size
-    let title = req.query.name
-    let priceGreaterThan = req.query.priceGreaterThan
-    let priceLessThan = req.query.priceLessThan
-    obj = {}
-    if (availableSizes) {obj.availableSizes = availableSizes}
+    try {
+        // 👉 fet query data 
+        const query = req.query;
+        const obj = {}
+        const sort = {}
+        if (!vfy.isEmptyObject(query)) {
+            let availableSizes = query.size
+            let title = query.name
+            let priceGreaterThan = query.priceGreaterThan
+            let priceLessThan = query.priceLessThan
+            let priceSort = query.priceSort
 
-    if (title){obj.title = { $regex: title, $options: " " }}
+            // if (availableSizes) { obj.availableSizes = availableSizes }
+            if (!vfy.isEmptyVar(availableSizes)) { obj.availableSizes = { $in: availableSizes } }
 
-    if (priceGreaterThan){obj.price = { $gt: priceGreaterThan }}
+            if (!vfy.isEmptyVar(title)) { obj.title = { $regex: title, $options: "i" } }
 
-    if (priceLessThan){obj.price = { $lt: priceLessThan }}
+            if (!vfy.isEmptyVar(priceGreaterThan) && !vfy.isEmptyVar(priceLessThan)) {
+                obj.price = { $gte: priceGreaterThan, $lte: priceLessThan }
+            } else if (!vfy.isEmptyVar(priceGreaterThan)) {
+                obj.price = { $gte: priceGreaterThan }
+            }
+            else if (!vfy.isEmptyVar(priceLessThan)) {
+                obj.price = { $lte: priceLessThan }
+            }
 
-    obj.isDeleted = false
-    obj.deletedAt = null
+            if (priceSort) {
+                if (priceSort != '-1' && priceSort != '1') return res.status(500).send({ status: false, Message: "priceSort only accept -1 and 1 as value" })
+                sort.price = Number(priceSort)
+            }
 
-    if (req.query.sort === -1){const getProductsList = await productModel.find(obj).sort({ price: -1 })
+        }
+        obj.isDeleted = false
+        const getProductsList = await productModel.find(obj).sort(sort)
+        if (!getProductsList || getProductsList.length == 0) return res.status(404).send({ status: false, Message: `product is not available in this moment try again later` })
+        return res.status(200).send({ status: true, Message: `✅ ${getProductsList.length} Product${getProductsList.length == 1 ? " is" : "s are"} Matched`, data: getProductsList })
 
-    if (!getProductsList || getProductsList.length == 0) {res.status(400).send({ status: false, Message: `product is not available in this moment try again later` })
-
-    } else {res.status(200).send({ status: true, Message: 'Matched Products', data: getProductsList })}
-
-    } else {const getProductsList = await productModel.find(obj).sort({ price: 1 })
-
-    if (!getProductsList || getProductsList.length == 0) {res.status(400).send({ status: false, Message: `product is not available in this moment try again later` })
-
-    } else {res.status(200).send({ status: true, Message: 'Matched Products', data: getProductsList })}}
-
-
-    } else {if (req.query.sort === -1) {const getProducts = await productModel.find({ isDeleted: false, deletedAt: null }).sort({ price: -1 })
-      return res.status(200).send({ status: true, Message: 'Products-->', data: getProducts })
-
-    } else {const getProducts = await productModel.find({ isDeleted: false, deletedAt: null }).sort({ price: 1 })
-       return res.status(200).send({ status: true, Message: 'Products-->', data: getProducts })}}
-
-    } catch (err){res.status(500).send({ status: false, Message: err.Message })}
+    } catch (err) {
+        res.status(500).send({ status: false, Message: err.Message })
+    }
 
 }
 
 
-module.exports = {create,getProduct}
+
+// get product by id ----------------->>
+const getProductById = async function (req, res) {
+    try {
+        let productId = params.productId
+        if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: false, Message: '😩 Invalid productId' })
+
+        // db call here
+        const searchProduct = await productModel.findOne({ _id: productId, isDeleted: false })
+        if (!searchProduct) return res.status(404).send({ status: false, Message: '😩 prouct does not exists' })
+        res.status(200).send({ status: true, Message: '✅ Success', data: searchProduct })
+    }
+    catch (err) {
+        res.status(500).send({ status: false, Message: err.message })
+    }
+}
+
+
+
+
+// 👉 api for delete product --------------------------------
+const deleteProduct = async (req, res) => {
+    try {
+        //👉 get params product id
+        const productId = params.productId;
+        // 👉 check product id is a valid object id or not
+        if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: !true, Message: "⚠️ Invalid ObjectID!" })
+        //👉 find product by id
+        const product = await productModel.findById(productId)
+        if (!product) return res.status(404).send({ status: !true, Message: "😩 Product information unavailable!" })
+        if (product.isDeleted) return res.status(400).send({ status: !true, Message: "😩 Product already deleted!" })
+
+        // execute delete here
+        product.isDeleted = true;
+        product.deletedAt = new Date();
+        product.save();
+        res.status(200).send({ status: true, Message: "✅ Product deleted successfully!" })
+    } catch (_) {
+        res.status(500).send({ status: true, Message: _.message })
+    }
+}
+
+
+
+
+module.exports = { create, getProduct, getProductById, deleteProduct }
