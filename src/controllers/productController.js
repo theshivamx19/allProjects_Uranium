@@ -114,7 +114,7 @@ const getProduct = async function (req, res) {
 // get product by id ----------------->>
 const getProductById = async function (req, res) {
     try {
-        let productId = params.productId
+        let productId = req.params.productId
         if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: false, Message: '😩 Invalid productId' })
 
         // db call here
@@ -134,7 +134,7 @@ const getProductById = async function (req, res) {
 const deleteProduct = async (req, res) => {
     try {
         //👉 get params product id
-        const productId = params.productId;
+        const productId = req.params.productId;
         // 👉 check product id is a valid object id or not
         if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: !true, Message: "⚠️ Invalid ObjectID!" })
         //👉 find product by id
@@ -145,7 +145,7 @@ const deleteProduct = async (req, res) => {
         // execute delete here
         product.isDeleted = true;
         product.deletedAt = new Date();
-        product.save();
+        await product.save();
         res.status(200).send({ status: true, Message: "✅ Product deleted successfully!" })
     } catch (_) {
         res.status(500).send({ status: true, Message: _.message })
