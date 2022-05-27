@@ -167,18 +167,18 @@ const update = async (req, res) => {
         }
 
         if (!vfy.isEmptyVar(email)) {
+            if (!vfy.isValidEmail(email)) return res.status(400).send({ status: !true, message: "☹️ Invalid email address!" })
             let usedEmail = await userModel.findOne({ _id: { $ne: userId }, email });
             if (usedEmail) return res.status(400).send({ status: false, Message: "This email is already registerd" });
 
-            if (!vfy.isValidEmail(email)) return res.status(400).send({ status: !true, message: "☹️ Invalid email address!" })
             user.email = email
         }
 
         if (!vfy.isEmptyVar(phone)) {
+            if (!vfy.isValidPhone(phone)) return res.status(400).send({ status: !true, message: "☹️ Invalid phone number!" })
             let usedMobileNumber = await userModel.findOne({ _id: { $ne: userId }, phone });
             if (usedMobileNumber) return res.status(400).send({ status: false, Message: "This Mobile no. is already registerd" });
 
-            if (!vfy.isValidPhone(phone)) return res.status(400).send({ status: !true, message: "☹️ Invalid phone number!" })
             user.phone = phone
         }
 
@@ -214,7 +214,7 @@ const update = async (req, res) => {
                 }
             }
 
-            // shipping address validation
+            // billing address validation
             if (!vfy.isEmptyObject(billing)) {
                 if (!vfy.isEmptyVar(billing.street)) {
                     user.address.billing.street = billing.street

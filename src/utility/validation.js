@@ -8,8 +8,9 @@ let isEmptyObject = function (body) {
 }
 
 let isEmptyVar = function (value) {
+    if(!value) return true
     if (typeof value === 'undefined' || value === null) return true;
-    if (typeof value === 'string' && value.trim().length === 0) return true;
+    if (value.trim().length === 0) return true;
     return false;
 }
 
