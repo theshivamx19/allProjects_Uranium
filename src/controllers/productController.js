@@ -152,9 +152,9 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+
+
 //----------------------------#Put api-------------------------------->>
-
-
 const updateProductById = async function (req, res) {
     try {
         const requestBody = req.body
@@ -171,34 +171,50 @@ const updateProductById = async function (req, res) {
 
 
         if (!vfy.isEmptyVar(description)) { checkProductId.description = description }
-        if (!vfy.isEmptyVar(price)) { checkProductId.price = price }
+        if (!vfy.isEmptyVar(price)) {
+            if (!Number(price)) return res.status(400).send({ status: false, message: "☹️ price only accept numbers like [1-9]!" });
+            checkProductId.price = price
+        }
         if (!vfy.isEmptyVar(currencyId)) { checkProductId.currencyId = currencyId }
         if (!vfy.isEmptyVar(isFreeShipping)) { checkProductId.isFreeShipping = isFreeShipping }
         if (!vfy.isEmptyVar(currencyFormat)) { checkProductId.currencyFormat = currencyFormat }
         if (!vfy.isEmptyVar(style)) { checkProductId.style = style }
         if (!vfy.isEmptyVar(installments)) { checkProductId.installments = installments }
-        if(!vfy.isEmptyVar(availableSizes)){
+        if (!vfy.isEmptyVar(availableSizes)) {
+            // approach 1
             let availableSizeObj = vfy.isValidJSONstr(availableSizes)
-            
+            if (!availableSizeObj) return res.status(400).send({ status: !true, Message: `☹️ in availableSizes, invalid json !` })
+            if (!Array.isArray(availableSizeObj)) return res.status(400).send({ status: !true, Message: `☹️ in availableSizes, invalid array !` })
+            if (!vfy.checkArrContent(availableSizeObj, "S", "XS", "M", "X", "L", "XXL", "XL")) return res.status(400).send({ status: !true, Message: `☹️ availableSizes is only accept S , XS , M , X , L , XXL , XL !` })
+            let tempArr = [...checkProductId.availableSizes]
+            tempArr.push(...availableSizeObj)
+            tempArr = [...new Set(tempArr)] // set {"S", "XS", "M"}
+            checkProductId.availableSizes = tempArr
+
+            // approach 2
+            // if (Array.isArray(availableSizes)) {
+            //     if (!vfy.checkArrContent(availableSizes, "S", "XS", "M", "X", "L", "XXL", "XL")) return res.status(400).send({ status: !true, Message: `☹️ availableSizes is only accept S , XS , M , X , L , XXL , XL !` })
+            //     checkProductId.availableSizes.push(...availableSizes)
+            // } else {
+            //     checkProductId.availableSizes.push(availableSizes)
+            // }
+            // console.log(typeof availableSizes)
         }
 
         if (!vfy.isEmptyVar(title)) {
-            const isTitleAlreadyUsed = await productModel.findOne({ title: title });
-            if (isTitleAlreadyUsed) { return res.status(400).send({ status: false, Message: `${title} already exist ` }) }
-
-            checkProductId.title = title}
+            const isTitleAlreadyUsed = await productModel.findOne({ _id: { $ne: productId }, title: title });
+            if (isTitleAlreadyUsed) { return res.status(400).send({ status: false, Message: `title, ${title} already exist ` }) }
+            checkProductId.title = title
+        }
 
         if (!vfy.isEmptyFile(files)) {
             if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: !true, Message: "⚠️ we accept jpg, jpeg or png as product image only!" })
             const ProfilePicture = await uploadFile(files[0])
-            checkProductId.profileImage = ProfilePicture
+            checkProductId.productImage = ProfilePicture
         }
 
-        // if (availableSizes) {
-        //     if (availableSizes.length === 0) {
-        //         return res.status(400).send({ status: false, Message: 'please provide the product size' })
-        //     }
-        // }
+        await checkProductId.save();
+        res.status(200).send({ status: true, message: "✅ Product info updated successfully!", data: checkProductId });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
