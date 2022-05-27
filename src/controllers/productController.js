@@ -152,7 +152,60 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+//----------------------------#Put api-------------------------------->>
+
+
+const updateProductById = async function (req, res) {
+    try {
+        const requestBody = req.body
+        const productId = req.params.productId
+        if (!vfy.isValidObjectId(productId)) { return res.status(400).send({ status: false, Message: "Invalid productId" }) }
+        const checkProductId = await productModel.findOne({ _id: productId, isDeleted: false })
+        if (!checkProductId) { return res.status(404).send({ status: false, Message: 'Product not found' }) }
+
+        const { title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments } = requestBody;
+
+        // const checkProductId = {}
+
+        const files = req.files
+
+
+        if (!vfy.isEmptyVar(description)) { checkProductId.description = description }
+        if (!vfy.isEmptyVar(price)) { checkProductId.price = price }
+        if (!vfy.isEmptyVar(currencyId)) { checkProductId.currencyId = currencyId }
+        if (!vfy.isEmptyVar(isFreeShipping)) { checkProductId.isFreeShipping = isFreeShipping }
+        if (!vfy.isEmptyVar(currencyFormat)) { checkProductId.currencyFormat = currencyFormat }
+        if (!vfy.isEmptyVar(style)) { checkProductId.style = style }
+        if (!vfy.isEmptyVar(installments)) { checkProductId.installments = installments }
+        if(!vfy.isEmptyVar(availableSizes)){
+            let availableSizeObj = vfy.isValidJSONstr(availableSizes)
+            
+        }
+
+        if (!vfy.isEmptyVar(title)) {
+            const isTitleAlreadyUsed = await productModel.findOne({ title: title });
+            if (isTitleAlreadyUsed) { return res.status(400).send({ status: false, Message: `${title} already exist ` }) }
+
+            checkProductId.title = title}
+
+        if (!vfy.isEmptyFile(files)) {
+            if (!vfy.acceptFileType(files[0], 'image/jpeg', 'image/png')) return res.status(400).send({ status: !true, Message: "⚠️ we accept jpg, jpeg or png as product image only!" })
+            const ProfilePicture = await uploadFile(files[0])
+            checkProductId.profileImage = ProfilePicture
+        }
+
+        // if (availableSizes) {
+        //     if (availableSizes.length === 0) {
+        //         return res.status(400).send({ status: false, Message: 'please provide the product size' })
+        //     }
+        // }
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message });
+    }
+
+}
 
 
 
-module.exports = { create, getProduct, getProductById, deleteProduct }
+
+module.exports = { create, getProduct, getProductById, updateProductById, deleteProduct }

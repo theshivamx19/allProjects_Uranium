@@ -14,6 +14,7 @@ router.get('/user/:userId/profile', authentication, controller.getUser)
 router.post('/products', product.create)
 router.get('/products', product.getProduct)
 router.get('/products/:productId', product.getProductById)
+router.put('/products/:productId', product.updateProductById)
 router.delete('/products/:productId', product.deleteProduct)
 
 
