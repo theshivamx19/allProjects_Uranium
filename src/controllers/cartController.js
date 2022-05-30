@@ -1,9 +1,6 @@
 const cartModel = require('../models/cartModels')
 const productModel = require('../models/productModels')
 const vfy = require('../utility/validation')
-// const userModel = require('../models/userModel')
-
-
 /*---------------------- create cart ----------------------*/
 
 const create = async (req, res) => {
@@ -98,13 +95,6 @@ const create = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
 /*---------------------- update cart ----------------------*/
 
 const update = async (req, res) => {
@@ -189,15 +179,29 @@ const update = async (req, res) => {
     }
 }
 
+//------------Get cart---------------------
 
+const getCart = async function (req, res) {
+    try {const userId = req.params.userId
+        // authroization is being checked through Auth(Middleware)
+        const checkCart = await cartModel.findOne({ userId: userId })
+        if (!checkCart) { return res.status(404).send({ status: false, Message: 'cart not found 😣' }) }
 
+        res.status(200).send({ status: true, Message: 'sucess 😍', data: checkCart })
+    } catch (error) { res.status(500).send({ status: false, Message: error.message })}}
 
+//------------------------Delete cart-----------------------
 
+const deleteCart = async function (req, res) {
+    try {const userId = req.params.userId
+        // authroization is being checked through Auth(Middleware)
+        const checkCart = await cartModel.findOne({ userId: userId })
+        if (!checkCart){return res.status(400).send({ status: false, Message: 'cart not found 😣' }) }
+        await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 })
+        res.status(200).send({ status: true, Message: 'sucessfully deleted'})
+    } catch (error){unsuccess(res,500,error.message)}}
 
-
-
-
-
+//--------------------
 const success = (res, statusCode, Data, Message) => {
     return res.status(statusCode).send({ status: true, Message: Message, data: Data })
 }
@@ -206,7 +210,4 @@ const unsuccess = (res, statusCode, Message) => {
     return res.status(statusCode).send({ status: !true, Message: Message })
 }
 
-
-
-
-module.exports = { create, update }
+module.exports = { create, update, getCart, deleteCart }
