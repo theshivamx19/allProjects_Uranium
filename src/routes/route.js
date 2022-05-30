@@ -21,7 +21,7 @@ router.delete('/products/:productId', product.deleteProduct)
 // cart
 router.post('/users/:userId/cart', authentication, authorization_user, cart.create)
 router.put('/users/:userId/cart', authentication, authorization_user, cart.update)
-router.put('/users/:userId/cart', authentication, authorization_user, cart.getCart)
-router.get('/users/:userId/cart', authentication, authorization_user, cart.deleteCart)
+router.get('/users/:userId/cart', authentication, authorization_user, cart.getCart)
+router.delete('/users/:userId/cart', authentication, authorization_user, cart.deleteCart)
 
 module.exports = router;
