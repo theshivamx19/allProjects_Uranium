@@ -2,6 +2,7 @@ const express = require('express');
 let router = express.Router();
 const controller = require('../controllers/userController')
 const product = require('../controllers/productController')
+const cart = require('../controllers/cartController')
 const { authentication, authorization_user } = require('../middleware/auth')
 
 // user
@@ -16,6 +17,10 @@ router.get('/products', product.getProduct)
 router.get('/products/:productId', product.getProductById)
 router.put('/products/:productId', product.updateProductById)
 router.delete('/products/:productId', product.deleteProduct)
+
+// cart
+router.post('/users/:userId/cart', authentication, authorization_user, cart.create)
+router.put('/users/:userId/cart', authentication, authorization_user, cart.update)
 
 
 module.exports = router;

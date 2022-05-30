@@ -54,7 +54,7 @@ const create = async (req, res) => {
 
         // ✅ all done now create product
         const createProduct = await productModel.create(rawData)
-        return res.status(200).send({ status: true, Message: "✅ Product created successfully!", data: createProduct })
+        return res.status(201).send({ status: true, Message: "✅ Product created successfully!", data: createProduct })
 
     } catch (_) {
         res.status(500).send({ status: !true, Message: _.message })
