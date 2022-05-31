@@ -184,7 +184,7 @@ const update = async (req, res) => {
 const getCart = async function (req, res) {
     try {const userId = req.params.userId
         // authroization is being checked through Auth(Middleware)
-        const checkCart = await cartModel.findOne({ userId: userId })
+        const checkCart = await cartModel.findOne({ userId: userId }).populate('items.productId')
         if (!checkCart) { return res.status(404).send({ status: false, Message: 'cart not found 😣' }) }
 
         res.status(200).send({ status: true, Message: 'sucess 😍', data: checkCart })

@@ -255,8 +255,6 @@ const update = async (req, res) => {
         })
     }
 }
-
-
 //==========================================#Get Api (Get User) ============================================>>
 
 const getUser = async function (req, res) {
@@ -272,9 +270,4 @@ const getUser = async function (req, res) {
     }
 }
 
-module.exports = {
-    createUser,
-    login,
-    getUser,
-    update
-}
+module.exports = {createUser,login,getUser,update}
