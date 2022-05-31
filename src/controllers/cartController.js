@@ -14,7 +14,8 @@ const create = async (req, res) => {
 
         // destructure data here
         let { productId, quantity, cartId } = data
-
+        // if quantity does't exist then add 1 default
+        quantity = quantity || 1;
         // basic validations
         // validate products
         if (vfy.isEmptyVar(productId)) return unsuccess(res, 400, '☹️ ProductId must be required!')
@@ -182,24 +183,28 @@ const update = async (req, res) => {
 //------------Get cart---------------------
 
 const getCart = async function (req, res) {
-    try {const userId = req.params.userId
+    try {
+        const userId = req.params.userId
         // authroization is being checked through Auth(Middleware)
-        const checkCart = await cartModel.findOne({ userId: userId }).populate('items.productId')
+        const checkCart = await cartModel.findOne({ userId: userId }) //.populate('items.productId')
         if (!checkCart) { return res.status(404).send({ status: false, Message: 'cart not found 😣' }) }
 
         res.status(200).send({ status: true, Message: 'sucess 😍', data: checkCart })
-    } catch (error) { res.status(500).send({ status: false, Message: error.message })}}
+    } catch (error) { res.status(500).send({ status: false, Message: error.message }) }
+}
 
 //------------------------Delete cart-----------------------
 
 const deleteCart = async function (req, res) {
-    try {const userId = req.params.userId
+    try {
+        const userId = req.params.userId
         // authroization is being checked through Auth(Middleware)
         const checkCart = await cartModel.findOne({ userId: userId })
-        if (!checkCart){return res.status(400).send({ status: false, Message: 'cart not found 😣' }) }
+        if (!checkCart) { return res.status(400).send({ status: false, Message: 'cart not found 😣' }) }
         await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 })
-        res.status(200).send({ status: true, Message: 'sucessfully deleted'})
-    } catch (error){unsuccess(res,500,error.message)}}
+        res.status(200).send({ status: true, Message: 'sucessfully deleted' })
+    } catch (error) { res.status(500).send({ status: false, Message: error.message }) }
+}
 
 //--------------------
 const success = (res, statusCode, Data, Message) => {
