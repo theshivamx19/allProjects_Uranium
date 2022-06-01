@@ -38,7 +38,7 @@ const createOrder = async function (req, res) {
 }
 //-----------------------------#Put Api--------------------------
 const updateOrder = async function (req, res) {
-    const userId = req.param.userId
+    const userId = req.params.userId
     const requestBody = req.body
     // 👍 Authroization is being checked through Auth(Middleware)
 
@@ -46,6 +46,7 @@ const updateOrder = async function (req, res) {
     if (vfy.isEmptyObject(requestBody)) { return res.status(400).send({ status: false, Message: '☹️ Invalid request Body' }) }
     if (vfy.isEmptyVar(orderId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide orderId' }) }
     if (!vfy.isValidObjectId(userId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide valid userId through Params' }) }
+    if (!vfy.isValidObjectId(orderId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide valid orderId' }) }
     if (!orderId) { return res.status(400).send({ status: false, Message: `Order does not exist for ${orderId}` }) }
 
     const userByOrder = await orderModel.findOne({ userId })
@@ -59,7 +60,7 @@ const updateOrder = async function (req, res) {
     if (userByOrder["status"] == "completed") { return res.status(400).send({ status: false, Message: "This order is already compleated so you can't update it's status" }) }
 
     const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { status } }, { new: true })
-    return res.status(200).send({ status: true, data:updateOrder,Message: "😍 Order upodated successfully" })
+    return res.status(200).send({ status: true, data:updateOrder,Message: "😍 Order updated successfully" })
 }
 
 module.exports = { createOrder, updateOrder }
