@@ -59,7 +59,7 @@ const updateOrder = async function (req, res) {
     if (userByOrder["status"] == "completed") { return res.status(400).send({ status: false, Message: "This order is already compleated so you can't update it's status" }) }
 
     const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { status } }, { new: true })
-    return res.status(200).send({ status: true, Message: "😍 Order upodated successfully" })
+    return res.status(200).send({ status: true, data:updateOrder,Message: "😍 Order upodated successfully" })
 }
 
 module.exports = { createOrder, updateOrder }
