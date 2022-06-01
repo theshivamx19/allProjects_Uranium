@@ -27,5 +27,6 @@ router.delete('/users/:userId/cart', authentication, authorization_user, cart.de
 
 // Order
 router.post('/users/:userId/orders', authentication, authorization_user, order.createOrder)
+router.put('/users/:userId/orders', authentication, authorization_user, order.updateOrder)
 
 module.exports = router;
