@@ -11,7 +11,7 @@ const createOrder = async function (req, res) {
 
         // 👍 Authroization is being checked through Auth(Middleware)
 
-        const { cartId } = requestBody
+        const { cartId, cancellable } = requestBody
         if (vfy.isEmptyObject(requestBody)) { return res.status(400).send({ status: false, Message: '☹️ Please provide Post Body' }); }
 
         if (vfy.isEmptyVar(cartId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide cartId' }) }
@@ -28,7 +28,7 @@ const createOrder = async function (req, res) {
         items.forEach(each => totalQuantity += each.quantity);
 
         // object that use to create order
-        const Obj = { userId, items, totalPrice, totalItems, totalQuantity }
+        const Obj = { userId, items, totalPrice, totalItems, totalQuantity, cancellable }
 
         const createProduct = await orderModel.create(Obj);
 
@@ -48,19 +48,19 @@ const updateOrder = async function (req, res) {
     if (!vfy.isValidObjectId(userId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide valid userId through Params' }) }
     if (!vfy.isValidObjectId(orderId)) { return res.status(400).send({ status: false, Message: '☹️ Please provide valid orderId' }) }
     if (!orderId) { return res.status(400).send({ status: false, Message: `Order does not exist for ${orderId}` }) }
-
-    const userByOrder = await orderModel.findOne({ userId })
-    if (!userByOrder) { return res.status(400).send({ status: false, Message: `Order does not exist for ${userId}` }) }
-    if (vfy.isEmptyVar(status)) { return res.status(400).send({ status: false, Message: '☹️ Invalid Status' }) }
+    if (vfy.isEmptyVar(status)) { return res.status(400).send({ status: false, Message: '☹️ Status required' }) }
     if (!["pending", "completed", "canceled"].includes(status)) { return res.status(400).send({ status: false, Message: '☹️ Status should be only ["pending", "completed", "canceled"]' }) }
+
+    const userByOrder = await orderModel.findOne({ _id: orderId, userId })
+    if (!userByOrder) { return res.status(400).send({ status: false, Message: `Order does not exist for ${userId}` }) }
 
     if (status == "canceled") {
         if (!userByOrder.cancellable) { return res.status(400).send({ status: false, Message: "This order camn't be cancelled because it is not allowed(cancellable=false)" }) }
     }
-    if (userByOrder["status"] == "completed") { return res.status(400).send({ status: false, Message: "This order is already compleated so you can't update it's status" }) }
+    // if (userByOrder["status"] == "completed") { return res.status(400).send({ status: false, Message: "This order is already compleated so you can't update it's status" }) }
 
-    const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: { status } }, { new: true })
-    return res.status(200).send({ status: true, data:updateOrder,Message: "😍 Order updated successfully" })
+    const updateOrder = await orderModel.findOneAndUpdate({ _id: orderId, userId }, { $set: { status } }, { new: true })
+    return res.status(200).send({ status: true, data: updateOrder, Message: "😍 Order updated successfully" })
 }
 
 module.exports = { createOrder, updateOrder }
