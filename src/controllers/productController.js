@@ -7,7 +7,7 @@ const { uploadFile } = require('../aws.config')
 const create = async (req, res) => {
     try {
         // 👉 get data from Body
-        const data = { ...req.body }
+        const data = req.body
         const files = req.files
 
         // 👉 if body OR file is empty
@@ -35,7 +35,7 @@ const create = async (req, res) => {
         if (!vfy.checkArrContent(availableSizes, "S", "XS", "M", "X", "L", "XXL", "XL")) return res.status(400).send({ status: !true, Message: `☹️ availableSizes is only accept S , XS , M , X , L , XXL , XL !` })
 
         // 👉 installments validation
-        if (!vfy.isEmptyVar(installments)) {
+        if (!vfy.isEmptyVar(installments)){
             if (!Number(installments)) return res.status(400).send({ status: !true, Message: "☹️ installments must be a number!" })
         }
 
@@ -136,7 +136,7 @@ const deleteProduct = async (req, res) => {
         //👉 get params product id
         const productId = req.params.productId;
         // 👉 check product id is a valid object id or not
-        if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: !true, Message: "⚠️ Invalid ObjectID!" })
+        if (!vfy.isValidObjectId(productId)) return res.status(400).send({ status: !true, Message: "⚠️ Invalid ProjectID!" })
         //👉 find product by id
         const product = await productModel.findById(productId)
         if (!product) return res.status(404).send({ status: !true, Message: "😩 Product information unavailable!" })
@@ -159,6 +159,8 @@ const updateProductById = async function (req, res) {
     try {
         const requestBody = req.body
         const productId = req.params.productId
+        const files = req.files
+        if(vfy.isEmptyObject(requestBody) && vfy.isEmptyFile(files)){ return res.status(400).send({ status: false, Message: "Body is required" }) }
         if (!vfy.isValidObjectId(productId)) { return res.status(400).send({ status: false, Message: "Invalid productId" }) }
         const checkProductId = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!checkProductId) { return res.status(404).send({ status: false, Message: 'Product not found' }) }
@@ -167,7 +169,7 @@ const updateProductById = async function (req, res) {
 
         // const checkProductId = {}
 
-        const files = req.files
+        
 
 
         if (!vfy.isEmptyVar(description)) { checkProductId.description = description }

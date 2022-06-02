@@ -172,7 +172,7 @@ const update = async (req, res) => {
         cart.totalItems = cart.items.length
         // update cart
         await cart.save()
-        return success(res, 201, cart, `✅ You just ${removeProduct == 0 ? 'remove an item from your cart' : 'decress quantity by ' + removeProduct} !`,)
+        return success(res, 200, cart, `✅ You just ${removeProduct == 0 ? 'remove an item from your cart' : 'decress quantity by ' + removeProduct} !`,)
 
     } catch (_) {
         console.log(_)
