@@ -54,7 +54,7 @@ const updateOrder = async function (req, res) {
     const userByOrder = await orderModel.findOne({ _id: orderId, userId })
     if (!userByOrder) { return res.status(400).send({ status: false, Message: `Order does not exist for ${userId}` }) }
 
-    if (status == "canceled") {
+    if (status == "canceled"){
         if (!userByOrder.cancellable) { return res.status(400).send({ status: false, Message: "This order camn't be cancelled because it is not allowed(cancellable=false)" }) }
     }
     // if (userByOrder["status"] == "completed") { return res.status(400).send({ status: false, Message: "This order is already compleated so you can't update it's status" }) }
