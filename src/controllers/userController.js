@@ -22,9 +22,11 @@ const createUser = async function (req, res) {
         if (vfy.isEmptyVar(lname)) return res.status(400).send({ status: false, Message: "Please provide user's last name" })
         if (vfy.isEmptyVar(email)) return res.status(400).send({ status: false, Message: "Please provide user's email" })
         if (!vfy.isValidEmail(email)) return res.status(400).send({ status: false, Message: "please provide valid email" });
-        if (vfy.isEmptyVar(phone)) return res.status(400).send({ status: false, Message: "Please provide a vaild phone number" })
+        if (vfy.isEmptyVar(phone)) return res.status(400).send({ status: false, Message: "Please provide phone number" })
         if (!vfy.isValidPhone(phone)) return res.status(400).send({ status: false, Message: "please provide valid phone number" });
         if (vfy.isEmptyVar(password)) return res.status(400).send({ status: false, Message: "Please provide password" })
+        if (!vfy.isValidPassword(password)) return res.status(400).send({ status: false, Message: "Password must contain lenth between 8 - 15 with minimum 1 special character" })
+
         if (vfy.isEmptyVar(address)) return res.status(400).send({ status: false, Message: "Please provide address" })
         const addressObject = vfy.isValidJSONstr(address)
         if (!addressObject) return res.status(400).send({ status: false, Message: "Address json you are providing is not in a valid format 🤦‍♂️😂🤣" })
@@ -40,14 +42,14 @@ const createUser = async function (req, res) {
         if (vfy.isEmptyObject(shipping)) return res.status(400).send({ status: false, Message: "Please provide shipping address" })
         if (vfy.isEmptyVar(shipping.street)) return res.status(400).send({ status: false, Message: "Plz provide shipping street..!!" });
         if (vfy.isEmptyVar(shipping.city)) return res.status(400).send({ status: false, Message: "Plz provide shipping city..!!" });
-        if (vfy.isEmptyVar(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide shopping pincode" });
+        if (!shipping.pincode || isNaN(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide shopping pincode" });
         if (!vfy.isPincodeValid(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide a valid pincode" });
 
         // billinf address validation
         if (vfy.isEmptyObject(billing)) return res.status(400).send({ status: false, Message: "Plz provide billing address.!!" });
         if (vfy.isEmptyVar(billing.street)) return res.status(400).send({ status: false, Message: "Plz provide billing street..!!" });
         if (vfy.isEmptyVar(billing.city)) return res.status(400).send({ status: false, Message: "Plz provide billing city..!!" });
-        if (vfy.isEmptyVar(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz provide billing pincode" });
+        if (!billing.pincode || isNaN(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz provide billing pincode" });
         if (!vfy.isPincodeValid(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz provide a valid pincode" });
 
         //=================================Unique Db calls (Time saving)======================>>
@@ -74,7 +76,9 @@ const createUser = async function (req, res) {
             data: newUser
         });
 
+
     } catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             Message: error.message
@@ -208,7 +212,7 @@ const update = async (req, res) => {
                     user.address.shipping.city = shipping.city
                 }
 
-                if (!vfy.isEmptyVar(shipping.pincode)) {
+                if (!shipping.pincode || isNaN(shipping.pincode)) {
                     if (!vfy.isPincodeValid(shipping.pincode)) return res.status(400).send({ status: false, Message: "Plz provide a valid pincode for shipping" });
                     user.address.shipping.pincode = shipping.pincode
                 }
@@ -224,7 +228,7 @@ const update = async (req, res) => {
                     user.address.billing.city = billing.city
                 }
 
-                if (!vfy.isEmptyVar(billing.pincode)) {
+                if (!billing.pincode || isNaN(billing.pincode)) {
                     if (!vfy.isPincodeValid(billing.pincode)) return res.status(400).send({ status: false, Message: "Plz provide a valid pincode for billing" });
                     user.address.billing.pincode = billing.pincode
                 }
